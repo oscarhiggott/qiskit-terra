@@ -51,7 +51,7 @@ DIST_MEAS = {'hamming': hamming_distance}
 
 def plot_histogram(data, figsize=(7, 5), color=None, number_to_keep=None,
                    sort='asc', target_string=None,
-                   legend=None, bar_labels=True, title=None):
+                   legend=None, bar_labels=True, title=None, ax=None):
     """Plot a histogram of data.
 
     Args:
@@ -68,6 +68,8 @@ def plot_histogram(data, figsize=(7, 5), color=None, number_to_keep=None,
             list or 1 if it's a dict)
         bar_labels (bool): Label each bar in histogram with probability value.
         title (str): A string to use for the plot title
+        ax (Axes): matplotlib axes to use for the plot. Default is None in
+            which case a new figure of size figsize is created.
 
     Returns:
         matplotlib.Figure: A figure for the rendered histogram.
@@ -95,7 +97,10 @@ def plot_histogram(data, figsize=(7, 5), color=None, number_to_keep=None,
                                  "number of input executions: %s" %
                                  (len(legend), len(data)))
 
-    fig, ax = plt.subplots(figsize=figsize)
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)
+    else:
+        fig = ax.get_figure()
     labels = list(sorted(
         functools.reduce(lambda x, y: x.union(y.keys()), data, set())))
     if number_to_keep is not None:

@@ -102,7 +102,7 @@ class Anchor:
 class MatplotlibDrawer:
     def __init__(self, qregs, cregs, ops,
                  scale=1.0, style=None, plot_barriers=True,
-                 reverse_bits=False):
+                 reverse_bits=False, ax=None):
 
         if not HAS_MATPLOTLIB:
             raise ImportError('The class MatplotlibDrawer needs matplotlib. '
@@ -144,9 +144,15 @@ class MatplotlibDrawer:
                     dic = json.load(infile)
                 self._style.set_style(dic)
 
-        self.figure = plt.figure()
-        self.figure.patch.set_facecolor(color=self._style.bg)
-        self.ax = self.figure.add_subplot(111)
+        if ax is None:
+            self.figure = plt.figure()
+            self.figure.patch.set_facecolor(color=self._style.bg)
+            self.ax = self.figure.add_subplot(111)
+            self._external_axis = False
+        else:
+            self.ax = ax
+            self.figure = ax.get_figure()
+            self._external_axis = True
         self.ax.axis('off')
         self.ax.set_aspect('equal')
         self.ax.tick_params(labelbottom=False, labeltop=False,
@@ -434,7 +440,8 @@ class MatplotlibDrawer:
         fig_h = _yt - _yb
         if self._style.figwidth < 0.0:
             self._style.figwidth = fig_w * self._scale * self._style.fs / 72 / WID
-        self.figure.set_size_inches(self._style.figwidth, self._style.figwidth * fig_h / fig_w)
+        if not self._external_axis:
+            self.figure.set_size_inches(self._style.figwidth, self._style.figwidth * fig_h / fig_w)
         if filename:
             self.figure.savefig(filename, dpi=self._style.dpi,
                                 bbox_inches='tight')

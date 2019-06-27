@@ -65,7 +65,8 @@ def plot_gate_map(backend, figsize=None,
                   font_size=12,
                   qubit_color=None,
                   line_color=None,
-                  font_color='w'):
+                  font_color='w',
+                  ax=None):
     """Plots the gate map of a device.
 
     Args:
@@ -79,6 +80,7 @@ def plot_gate_map(backend, figsize=None,
         qubit_color (list): A list of colors for the qubits
         line_color (list): A list of colors for each line from coupling_map.
         font_color (str): The font color for the qubit labels.
+        ax (Axes): Matplotlib axes to be used, default None.
 
     Returns:
         Figure: A Matplotlib figure instance.
@@ -117,7 +119,10 @@ def plot_gate_map(backend, figsize=None,
     if n_qubits in mpl_data.keys():
         grid_data = mpl_data[n_qubits]
     else:
-        fig, ax = plt.subplots(figsize=(5, 5))  # pylint: disable=invalid-name
+        if ax is None:
+            fig, ax = plt.subplots(figsize=(5, 5))  # pylint: disable=invalid-name
+        else:
+            fig = ax.get_figure()
         ax.axis('off')
         return fig
 
@@ -131,7 +136,10 @@ def plot_gate_map(backend, figsize=None,
         else:
             figsize = (9, 3)
 
-    fig, ax = plt.subplots(figsize=figsize)  # pylint: disable=invalid-name
+    if ax is None:
+        fig, ax = plt.subplots(figsize=figsize)  # pylint: disable=invalid-name
+    else:
+        fig = ax.get_figure()
     ax.axis('off')
     fig.tight_layout()
 
